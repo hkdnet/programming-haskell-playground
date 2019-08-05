@@ -50,7 +50,7 @@ chisqr os es = sum [ ((o - e) ^ (2 :: Int)) / e | (o, e) <- zip os es ]
 
 frequency :: String -> [Float]
 frequency s =
-    [ fromIntegral (count c s) * 100.0 / fromIntegral (length s)
+    [ fromIntegral (count c $ map toLower s) * 100.0 / fromIntegral (length s)
     | c <- ['a' .. 'z']
     ]
 
@@ -62,9 +62,14 @@ count c s = sum $ map (\a -> if a == c then 1 else 0) s
 
 shift :: Int -> Char -> Char
 shift n c | isLower c = i2c $ (c2i c + n) `mod` 26
+          | isUpper c = i2cc $ (cc2i c + n) `mod` 26
           | otherwise = c
 
 c2i :: Char -> Int
 c2i c = ord c - ord 'a'
+cc2i :: Char -> Int
+cc2i c = ord c - ord 'A'
 i2c :: Int -> Char
 i2c i = chr $ i + ord 'a'
+i2cc :: Int -> Char
+i2cc i = chr $ i + ord 'A'
