@@ -1,5 +1,7 @@
 module Binary where
 
+import           Data.Char
+
 data Bit = Z | O deriving Show
 
 b2i :: Bit -> Int
@@ -20,3 +22,27 @@ int2bin n = i2b (n `mod` 2) : int2bin (n `div` 2)
 
 make8 :: [Bit] -> [Bit]
 make8 bits = take 8 (bits ++ repeat Z)
+
+chop8 :: [Bit] -> [[Bit]]
+chop8 []   = []
+chop8 bits = take 8 bits : (chop8 $ drop 8 bits)
+
+encode :: String -> [Bit]
+encode = concatMap encodeChar
+encodeChar :: Char -> [Bit]
+encodeChar c = make8 $ int2bin $ ord c
+
+decode :: [Bit] -> String
+decode []   = []
+decode bits = map decodeChar $ chop8 bits
+decodeChar :: [Bit] -> Char
+decodeChar bits = chr $ bin2int bits
+
+transmit :: String -> String
+transmit = decode . channel . encode
+
+channel :: [Bit] -> [Bit]
+channel = id
+
+echo2 :: [Bit] -> [Bit]
+echo2 xs = xs ++ xs
