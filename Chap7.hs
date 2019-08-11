@@ -1,6 +1,7 @@
 module Chap7 where
 
 import           Binary
+import           Luhn
 
 all' :: (a -> Bool) -> [a] -> Bool
 all' f = foldr (\e a -> a && f e) True
@@ -59,3 +60,28 @@ uiterate f e = unfold p h (\x -> [f (head x)]) [e]
     p _ = False
     h :: ([a] -> a)
     h = head
+
+count :: Eq a => a -> [a] -> Int
+count x = foldl (\a e -> if e == x then a + 1 else a) 0
+
+pencode :: String -> [Bit]
+pencode xs = b : c
+  where
+    c = encode xs
+    b = i2b $ count O c `mod` 2
+
+pdecode :: [Bit] -> String
+pdecode xs | length d `mod` 8 /= 0 = error "data lost"
+           | calc == parity        = decode d
+           | otherwise             = error "parity mismatch"
+  where
+    parity = head xs
+    d      = tail xs
+    calc   = i2b $ count O d `mod` 2
+
+altMap :: (a -> b) -> (a -> b) -> [a] -> [b]
+altMap _  _  []       = []
+altMap f1 f2 (x : xs) = f1 x : altMap f2 f1 xs
+
+luhn :: [Int] -> Bool
+luhn xs = n `mod` 10 == 0 where n = sum $ altMap luhnDouble id xs

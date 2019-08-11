@@ -2,7 +2,7 @@ module Binary where
 
 import           Data.Char
 
-data Bit = Z | O deriving Show
+data Bit = Z | O deriving (Show, Eq)
 
 b2i :: Bit -> Int
 b2i Z = 0
