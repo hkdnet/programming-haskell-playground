@@ -4,6 +4,8 @@ data Prop = Const Bool
     | Var Char
     | Not Prop
     | And Prop Prop
+    | Or Prop Prop
+    | Eq Prop Prop
     | Imply Prop Prop deriving (Show)
 
 --    A ^ not A
@@ -33,6 +35,8 @@ eval _ (Const b  ) = b
 eval s (Var   v  ) = snd (find (\t -> v == fst t) s)
 eval s (Not   p  ) = not $ eval s p
 eval s (And   a b) = eval s a && eval s b
+eval s (Or    a b) = eval s a || eval s b
+eval s (Eq    a b) = eval s a == eval s b
 eval s (Imply a b) = not (eval s a) || eval s b
 
 vars :: Prop -> [Char]
@@ -40,6 +44,8 @@ vars (Const _  ) = []
 vars (Var   c  ) = [c]
 vars (Not   p  ) = vars p
 vars (And   a b) = vars a ++ vars b
+vars (Or    a b) = vars a ++ vars b
+vars (Eq    a b) = vars a ++ vars b
 vars (Imply a b) = vars a ++ vars b
 
 bools :: Int -> [[Bool]]
@@ -55,6 +61,6 @@ patterns xs = map (zip xs) bss where bss = bools $ length xs
 
 isTaut :: Prop -> Bool
 isTaut p = all (\s -> eval s p) ss
-  where
-    vs = rmdups $ vars p
-    ss = patterns vs
+ where
+  vs = rmdups $ vars p
+  ss = patterns vs
