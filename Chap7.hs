@@ -53,11 +53,9 @@ umap f = unfold p h t
     t = tail
 
 uiterate :: (a -> a) -> a -> [a]
-uiterate f e = unfold p h t [e]
+uiterate f e = unfold p h (\x -> [f (head x)]) [e]
   where
     p :: (a -> Bool)
     p _ = False
     h :: ([a] -> a)
     h = head
-    t :: [a] -> [a]
-    t x = [f (head x)]
