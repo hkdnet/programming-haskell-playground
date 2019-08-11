@@ -1,5 +1,6 @@
 module AbsMachine where
 
+-- TODO: Impl multiply
 data Expr = Val Int | Add Expr Expr deriving (Show)
 
 type Cont = [Op]
